@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HotelManager
 {
-    class ReservaBasica
+    public class ReservaBasica
     {
         //Apenas reserva básica de diaria
         public int idReserva { get; set; }

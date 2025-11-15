@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HotelManager
 {
-    class ReservaService
+    public class ReservaBasicaService
     {
         private readonly List<ReservaBasica> _reservas = new();
 
