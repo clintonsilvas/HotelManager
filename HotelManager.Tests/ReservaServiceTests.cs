@@ -67,7 +67,7 @@ namespace HotelManager.Tests
             var reserva1 = new ReservaBasica
             {
                 idReserva = 1,
-                cliente = new Cliente { Nome = "A", Documento = "111" },
+                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
                 quarto = new Quarto { Numero = 101 },
                 Dia = DateTime.Now.AddDays(2)
             };
@@ -75,12 +75,12 @@ namespace HotelManager.Tests
             var reserva2 = new ReservaBasica
             {
                 idReserva = 2,
-                cliente = new Cliente { Nome = "B", Documento = "222" },
+                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
                 quarto = new Quarto { Numero = 101 },
                 Dia = reserva1.Dia
             };
 
-            service.cadastrarReserva(reserva1);
+            bool aux = service.cadastrarReserva(reserva1);
             bool resultado = service.cadastrarReserva(reserva2);
 
             Assert.False(resultado);
@@ -95,7 +95,7 @@ namespace HotelManager.Tests
             var reserva1 = new ReservaBasica
             {
                 idReserva = 1,
-                cliente = new Cliente { Nome = "A", Documento = "111" },
+                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
                 quarto = new Quarto { Numero = 101 },
                 Dia = DateTime.Now.AddDays(2)
             };
@@ -103,7 +103,7 @@ namespace HotelManager.Tests
             var reserva2 = new ReservaBasica
             {
                 idReserva = 1, // mesmo ID
-                cliente = new Cliente { Nome = "B", Documento = "222" },
+                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
                 quarto = new Quarto { Numero = 102 },
                 Dia = DateTime.Now.AddDays(3)
             };
@@ -123,7 +123,7 @@ namespace HotelManager.Tests
             var reserva = new ReservaBasica
             {
                 idReserva = 1,
-                cliente = new Cliente { Nome = "A", Documento = "111" },
+                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
                 quarto = new Quarto { Numero = 101 },
                 Dia = DateTime.Now.AddDays(1)
             };
