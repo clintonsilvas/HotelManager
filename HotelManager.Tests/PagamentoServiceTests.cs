@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using HotelManager;
+using HotelManager.Services;
+using HotelManager.Models;
 
 namespace HotelManager.Tests
 {
@@ -18,7 +19,8 @@ namespace HotelManager.Tests
                 IdReserva = 1,
                 Cliente = new Cliente { Nome = "Maria", Documento = "01234567890", Telefone = "91234-5678" },
                 Quarto = new Quarto { Numero = 101, Tipo = "Deluxe", PrecoDiaria = decimal.Parse("250") },
-                Dia = DateTime.Now.AddDays(1)
+                DataEntrada = DateTime.Now.AddDays(1),
+                DataSaida = DateTime.Now.AddDays(1)
             };
             var pagamento = new PagamentoService();
 
@@ -36,7 +38,8 @@ namespace HotelManager.Tests
                 IdReserva = 1,
                 Cliente = new Cliente { Nome = "Maria", Documento = "01234567890", Telefone = "91234-5678" },
                 Quarto = new Quarto { Numero = 101, Tipo = "Deluxe", PrecoDiaria = decimal.Parse("250") },
-                Dia = DateTime.Now.AddDays(1)
+                DataEntrada = DateTime.Now.AddDays(1),
+                DataSaida = DateTime.Now.AddDays(4)
             };
             var pagamento = new PagamentoService();
 
