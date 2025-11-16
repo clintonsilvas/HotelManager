@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HotelManager.Models;
+using HotelManager.Services;
+using System;
 using Xunit;
 
 namespace HotelManager.Tests
@@ -8,142 +10,154 @@ namespace HotelManager.Tests
         [Fact]
         public void DeveCadastrarReservaValida()
         {
-            var service = new ReservaBasicaService();
-            ReservaBasica reserva = new ReservaBasica
+            var service = new ReservaService();
+            Reserva reserva = new Reserva
             {
-                idReserva = 1,
-                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
-                quarto = new Quarto { Numero = 101, Tipo = "Simples" },
-                Dia = DateTime.Now.AddDays(1)
+                IdReserva = 1,
+                Cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
+                Quarto = new Quarto { Numero = 101, Tipo = "Simples" },
+                DataEntrada = DateTime.Now.AddDays(1),
+                DataSaida = DateTime.Now.AddDays(3)
             };
 
-            bool resultado = service.cadastrarReserva(reserva);
+            var resultado = service.AdicionarReserva(reserva);
 
             Assert.True(resultado);
-            Assert.Single(service.listarTodas());
-        }
-
-        [Fact]
-        public void NaoDeveCadastrarReservaComClienteInvalido()
-        {
-            var service = new ReservaBasicaService();
-            ReservaBasica reserva = new ReservaBasica
-            {
-                idReserva = 1,
-                cliente = new Cliente { Nome = "", Documento = "" },
-                quarto = new Quarto { Numero = 101, Tipo = "Simples" },
-                Dia = DateTime.Now.AddDays(1)
-            };
-
-            bool resultado = service.cadastrarReserva(reserva);
-
-            Assert.False(resultado);
-            Assert.Empty(service.listarTodas());
+            Assert.Single(service.ListarTodas());
         }
 
         [Fact]
         public void NaoDeveCadastrarReservaComDataPassada()
         {
-            var service = new ReservaBasicaService();
-            ReservaBasica reserva = new ReservaBasica
+            var service = new ReservaService();
+            Reserva reserva = new Reserva
             {
-                idReserva = 1,
-                cliente = new Cliente { Nome = "João", Documento = "12345678901" },
-                quarto = new Quarto { Numero = 101 },
-                Dia = DateTime.Now.AddDays(-1)
+                IdReserva = 1,
+                Cliente = new Cliente { Nome = "João", Documento = "12345678901" },
+                Quarto = new Quarto { Numero = 101 },
+                DataEntrada = DateTime.Now.AddDays(-3),
+                DataSaida = DateTime.Now.AddDays(-1)
             };
 
-            bool resultado = service.cadastrarReserva(reserva);
+            var resultado = service.AdicionarReserva(reserva);
 
             Assert.False(resultado);
-            Assert.Empty(service.listarTodas());
+            Assert.Empty(service.ListarTodas());
         }
 
         [Fact]
         public void NaoDeveCadastrarReservaEmQuartoJaReservadoNoMesmoDia()
         {
-            var service = new ReservaBasicaService();
+            var service = new ReservaService();
 
-            var reserva1 = new ReservaBasica
+            Quarto quarto = new Quarto { Numero = 101 };
+            
+
+            var reserva1 = new Reserva
             {
-                idReserva = 1,
-                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
-                quarto = new Quarto { Numero = 101 },
-                Dia = DateTime.Now.AddDays(2)
+                IdReserva = 1,
+                Cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },                
+                DataEntrada = DateTime.Now.AddDays(2),
+                DataSaida = DateTime.Now.AddDays(4)
             };
+            reserva1.Quarto = quarto;
 
-            var reserva2 = new ReservaBasica
+            var reserva2 = new Reserva
             {
-                idReserva = 2,
-                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
-                quarto = new Quarto { Numero = 101 },
-                Dia = reserva1.Dia
+                IdReserva = 2,
+                Cliente = new Cliente { Nome = "Luiz", Documento = "13576568662", Telefone = "99877-9281" },
+                Quarto = new Quarto { Numero = 101 },
+                DataEntrada = DateTime.Now.AddDays(2),
+                DataSaida = DateTime.Now.AddDays(4)
             };
+            reserva2.Quarto = quarto;
 
-            bool aux = service.cadastrarReserva(reserva1);
-            bool resultado = service.cadastrarReserva(reserva2);
+            var aux = service.AdicionarReserva(reserva1);
+            var resultado = service.AdicionarReserva(reserva2);
 
             Assert.False(resultado);
-            Assert.Single(service.listarTodas());
+            Assert.Single(service.ListarTodas());
         }
 
         [Fact]
-        public void NaoDeveCadastrarReservaComIdDuplicado()
+        public void DeveEncerrarReservaExistente()
         {
-            var service = new ReservaBasicaService();
+            var service = new ReservaService();
 
-            var reserva1 = new ReservaBasica
+            var reserva = new Reserva
             {
-                idReserva = 1,
-                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
-                quarto = new Quarto { Numero = 101 },
-                Dia = DateTime.Now.AddDays(2)
+                IdReserva = 1,
+                Cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
+                Quarto = new Quarto { Numero = 101 },
+                DataEntrada = DateTime.Now.AddDays(1),
+                DataSaida = DateTime.Now.AddDays(2)
             };
 
-            var reserva2 = new ReservaBasica
-            {
-                idReserva = 1, // mesmo ID
-                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
-                quarto = new Quarto { Numero = 102 },
-                Dia = DateTime.Now.AddDays(3)
-            };
+            service.AdicionarReserva(reserva);
+            reserva.MarcarComoPaga();
 
-            service.cadastrarReserva(reserva1);
-            bool resultado = service.cadastrarReserva(reserva2);
-
-            Assert.False(resultado);
-            Assert.Single(service.listarTodas());
-        }
-
-        [Fact]
-        public void DeveCancelarReservaExistente()
-        {
-            var service = new ReservaBasicaService();
-
-            var reserva = new ReservaBasica
-            {
-                idReserva = 1,
-                cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
-                quarto = new Quarto { Numero = 101 },
-                Dia = DateTime.Now.AddDays(1)
-            };
-
-            service.cadastrarReserva(reserva);
-
-            bool resultado = service.cancelarReserva(1);
+            var resultado = service.EncerrarReserva(reserva);
 
             Assert.True(resultado);
-            Assert.Empty(service.listarTodas());
+            Assert.Empty(service.ListarTodas());
         }
 
         [Fact]
-        public void NaoDeveCancelarReservaInexistente()
+        public void NaoDeveEncerrarReservaSemPagar()
         {
-            var service = new ReservaBasicaService();
-
-            bool resultado = service.cancelarReserva(99);
-
+            var service = new ReservaService();
+            var reserva = new Reserva
+            {
+                IdReserva = 1,
+                Cliente = new Cliente { Nome = "Clinton", Documento = "12345678901", Telefone = "99999-9999" },
+                Quarto = new Quarto { Numero = 101 },
+                DataEntrada = DateTime.Now.AddDays(1),
+                DataSaida = DateTime.Now.AddDays(2)
+            };
+            var resultado = service.EncerrarReserva(reserva);
             Assert.False(resultado);
+        }
+        private Cliente CriarCliente() => new Cliente { Nome = "Luiz", Documento = "123456" };
+        private Quarto CriarQuarto() => new Quarto { Numero = 10, PrecoDiaria = 200m };
+
+        [Fact]
+        public void DeveCalcularDiariasCorretamente()
+        {
+            var reserva = new Reserva
+            {
+                Cliente = CriarCliente(),
+                Quarto = CriarQuarto(),
+                DataEntrada = new DateTime(2025, 1, 1),
+                DataSaida = new DateTime(2025, 1, 4)
+            };     
+            Assert.Equal(3, reserva.CalcularDiarias());
+        }
+
+        [Fact]
+        public void DeveCalcularPrecoTotalCorretamente()
+        {
+            var reserva = new Reserva
+            {
+                Cliente = CriarCliente(),
+                Quarto = CriarQuarto(),
+                DataEntrada = new DateTime(2025, 12, 1),
+                DataSaida = new DateTime(2025, 12, 3)
+            };        
+            Assert.Equal(400m, reserva.PrecoTotal); // 2 dias * 200
+        }
+
+        [Fact]
+        public void DeveMarcarReservaComoPaga()
+        {
+            var reserva = new Reserva
+            {
+                Cliente = CriarCliente(),
+                Quarto = CriarQuarto(),
+                DataEntrada = DateTime.Today,
+                DataSaida = DateTime.Today.AddDays(2)
+            };
+            reserva.MarcarComoPaga();
+            Assert.True(reserva.Paga);
         }
     }
 }
